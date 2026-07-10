@@ -1,6 +1,7 @@
 // server.js
 require('dotenv').config(); // Carrega as variáveis do arquivo .env
 const express = require('express');
+const path = require('path');
 const cors = require('cors');
 const db = require('./backend/config/database');
 const usuarioRoutes = require('./backend/routes/usuarioRoutes');
@@ -12,6 +13,7 @@ const PORT = process.env.PORT || 3000;
 // Middlewares
 app.use(cors()); // Libera o acesso do Front-end
 app.use(express.json()); // Ensina o Express a entender requisições no formato JSON
+app.use(express.static(path.join(__dirname, 'frontend')));
 
 // Rota de teste simples
 app.get('/api/status', (req, res) => {
