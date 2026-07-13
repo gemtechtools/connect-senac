@@ -81,4 +81,4 @@ Ao receber um pedido para adicionar uma nova funcionalidade (ex: "Adicionar recu
 
 ---
 
-Se você me compreendeu, responda apenas: "Contexto Connect Senac MVP assimilado com sucesso.
+Se você me compreendeu, responda apenas: "Contexto Connect Senac MVP assimilado com sucesso!
