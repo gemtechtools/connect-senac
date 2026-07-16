@@ -8,3 +8,6 @@ router.post('/registrar', usuarioController.registrar);
 router.post('/login', usuarioController.login);
 
 module.exports = router;
+
+router.post('/esqueci-senha', usuarioController.solicitarRecuperacao);
+router.post('/redefinir-senha', usuarioController.redefinirSenha);
