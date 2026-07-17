@@ -12,6 +12,9 @@ const autorizarPerfis = require('../middlewares/rbacMiddleware');
 // ----------------------------------------------------------------------
 router.get('/ativos', authMiddleware, cursoController.listarAtivos);
 
+// Nova Rota Restrita (Gestão Completa)
+router.get('/admin', authMiddleware, autorizarPerfis('admin', 'coordenador'), cursoController.listarTodosAdmin);
+
 // ----------------------------------------------------------------------
 // Rotas Protegidas: Apenas a coordenação e a administração podem criar cursos
 // ----------------------------------------------------------------------
