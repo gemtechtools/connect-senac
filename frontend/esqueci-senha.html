@@ -1,31 +1,71 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recuperar Palavra-passe</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connect Senac - Recuperar Acesso</title>
+  <meta name="description" content="Recupere o acesso à sua conta Connect Senac.">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
-<body class="d-flex align-items-center bg-light vh-100">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-6 col-lg-4">
-                <div class="card shadow-lg border-0 rounded-4 p-4">
-                    <h4 class="fw-bold text-center mb-3" style="color: #004a8d;">Recuperar Acesso</h4>
-                    <p class="small text-muted text-center mb-4">Insira o seu e-mail. Enviaremos as instruções para criar uma nova palavra-passe.</p>
-                    <form id="formEsqueci">
-                        <div class="form-floating mb-3">
-                            <input type="email" class="form-control" id="emailRecuperacao" placeholder="E-mail" required>
-                            <label for="emailRecuperacao">O seu E-mail</label>
-                        </div>
-                        <div id="msgRecuperacao" class="small text-center mb-3 fw-bold"></div>
-                        <button type="submit" class="btn btn-primary w-100 mb-2">Enviar Link</button>
-                        <a href="index.html" class="btn btn-light w-100">Voltar ao Login</a>
-                    </form>
-                </div>
-            </div>
-        </div>
+<body class="auth-body">
+
+  <div class="auth-layout">
+
+    <!-- ========== PAINEL DE MARCA (esquerda, desktop) ========== -->
+    <div class="auth-brand-panel">
+      <div class="auth-brand-content">
+        <div class="auth-brand-logo">CS</div>
+        <h1>Recuperar Acesso</h1>
+        <p class="tagline">Não se preocupe. Enviaremos um link para que possa criar uma nova palavra-passe com segurança.</p>
+        <div class="auth-brand-divider"></div>
+        <ul class="auth-brand-features">
+          <li><span class="feat-icon">✓</span> Link enviado por e-mail</li>
+          <li><span class="feat-icon">✓</span> Válido por 1 hora</li>
+          <li><span class="feat-icon">✓</span> Processo seguro e encriptado</li>
+        </ul>
+      </div>
     </div>
-    <script src="js/auth.js"></script>
+
+    <!-- ========== PAINEL DO FORMULÁRIO (direita) ========== -->
+    <div class="auth-form-panel">
+      <div class="auth-form-inner">
+
+        <!-- Logo mobile -->
+        <div class="auth-mobile-logo">
+          <div class="logo-badge">CS</div>
+          <h2>Connect Senac</h2>
+          <p class="text-muted small mt-1 mb-0">Recuperação de acesso</p>
+        </div>
+
+        <div class="auth-card">
+          <h4 class="fw-bold mb-1">Esqueceu a sua senha?</h4>
+          <p class="text-muted small mb-4">
+            Insira o e-mail associado à sua conta. Enviaremos as instruções para criar uma nova palavra-passe.
+          </p>
+
+          <form id="formEsqueci">
+            <div class="form-floating mb-3">
+              <input type="email" class="form-control rounded-3" id="emailRecuperacao" placeholder="E-mail" required>
+              <label for="emailRecuperacao">O seu E-mail</label>
+            </div>
+
+            <div id="msgRecuperacao" class="small text-center mb-3 fw-semibold"></div>
+
+            <button type="submit" class="btn btn-brand w-100 py-3 mb-3" style="justify-content: center;">
+              Enviar Link de Recuperação
+            </button>
+
+            <a href="index.html" class="btn btn-light w-100 fw-semibold" style="border-radius: var(--radius-sm);">
+              ← Voltar ao Login
+            </a>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
 </body>
 </html>

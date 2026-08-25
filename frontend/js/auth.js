@@ -16,6 +16,11 @@ if (formLogin) {
     const senha = document.getElementById("senha").value;
     const msgErro = document.getElementById("mensagemErro");
 
+    if (msgErro) {
+      msgErro.classList.add("d-none");
+      msgErro.textContent = "";
+    }
+
     try {
       // Fazendo a requisição POST para o Back-end
       const response = await fetch(`${API_URL}/login`, {
@@ -39,9 +44,18 @@ if (formLogin) {
         } else {
           window.location.href = "painel.html"; // Candidato/Modelo
         }
+      } else {
+        if (msgErro) {
+          msgErro.textContent = data.erro || "Falha na autenticação. Verifique os seus dados.";
+          msgErro.classList.remove("d-none");
+        }
       }
     } catch (error) {
       console.error("Erro na requisição:", error);
+      if (msgErro) {
+        msgErro.textContent = "Erro de conexão com o servidor. Tente novamente mais tarde.";
+        msgErro.classList.remove("d-none");
+      }
     }
   });
 }

@@ -1,0 +1,842 @@
+/* ================================================
+   Connect Senac — Design System Global
+   v2.0 — Layout Refactoring
+   ================================================ */
+
+/* --- Google Fonts --- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* --- Design Tokens --- */
+:root {
+  /* Brand Colors */
+  --cs-brand:        #004a8d;
+  --cs-brand-dark:   #003366;
+  --cs-brand-mid:    #1a6bb5;
+  --cs-brand-light:  #e9f2fa;
+  --cs-brand-xlight: #f0f7ff;
+
+  /* UI Colors */
+  --cs-bg:           #f0f4f8;
+  --cs-surface:      #ffffff;
+  --cs-border:       #e2e8f0;
+  --cs-border-focus: rgba(0, 74, 141, 0.35);
+
+  /* Text */
+  --cs-text:         #1a202c;
+  --cs-text-muted:   #64748b;
+  --cs-text-light:   #94a3b8;
+
+  /* Semantic Colors */
+  --cs-success:      #16a34a;
+  --cs-success-light:#dcfce7;
+  --cs-danger:       #dc2626;
+  --cs-danger-light: #fee2e2;
+  --cs-warning:      #ca8a04;
+  --cs-warning-light:#fef9c3;
+
+  /* Layout */
+  --sidebar-w:       252px;
+  --topbar-h:        58px;
+
+  /* Shape */
+  --radius-sm:       8px;
+  --radius-md:       12px;
+  --radius-lg:       16px;
+  --radius-xl:       20px;
+
+  /* Shadows */
+  --shadow-xs: 0 1px 2px rgba(0,0,0,.05);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.05);
+  --shadow-md: 0 4px 6px rgba(0,0,0,.07), 0 2px 4px rgba(0,0,0,.05);
+  --shadow-lg: 0 10px 25px rgba(0,0,0,.10), 0 4px 10px rgba(0,0,0,.06);
+  --shadow-xl: 0 20px 40px rgba(0,0,0,.12), 0 8px 16px rgba(0,0,0,.07);
+
+  /* Transitions */
+  --t-fast:   all 0.15s ease;
+  --t-normal: all 0.25s ease;
+  --t-slow:   all 0.35s ease;
+}
+
+/* ================================================
+   BASE
+   ================================================ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  color: var(--cs-text);
+  background-color: var(--cs-bg);
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ================================================
+   SHARED COMPONENTS
+   ================================================ */
+
+/* Button Brand */
+.btn-brand {
+  background-color: var(--cs-brand);
+  color: #fff !important;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 0.72rem 1.25rem;
+  font-weight: 600;
+  font-size: 0.92rem;
+  transition: var(--t-normal);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.btn-brand:hover, .btn-brand:focus {
+  background-color: var(--cs-brand-dark);
+  color: #fff !important;
+  box-shadow: 0 4px 16px rgba(0, 74, 141, 0.30);
+  transform: translateY(-1px);
+}
+.btn-brand:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* Section Title */
+.section-title {
+  color: var(--cs-brand);
+  font-weight: 700;
+  border-bottom: 2px solid var(--cs-brand);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Card overrides */
+.card {
+  border: none !important;
+  border-radius: var(--radius-md) !important;
+}
+
+/* Course Card animation */
+.card-curso {
+  border: none !important;
+  border-radius: var(--radius-md) !important;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+  overflow: hidden;
+  cursor: pointer;
+}
+.card-curso:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg) !important;
+}
+
+/* Accordion override */
+.accordion-button:not(.collapsed) {
+  background-color: var(--cs-brand-light);
+  color: var(--cs-brand);
+  font-weight: 600;
+  box-shadow: none;
+}
+.accordion-button:focus {
+  box-shadow: 0 0 0 3px var(--cs-border-focus);
+}
+
+/* Form control focus */
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--cs-brand);
+  box-shadow: 0 0 0 3px rgba(0, 74, 141, 0.12);
+}
+
+
+/* ================================================
+   AUTH LAYOUT — Split-Screen
+   (index, cadastro, esqueci-senha, redefinir-senha)
+   ================================================ */
+
+.auth-body {
+  min-height: 100vh;
+  display: flex;
+  align-items: stretch;
+  background: var(--cs-bg);
+}
+
+.auth-layout {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* ---- Left: Brand Panel ---- */
+.auth-brand-panel {
+  display: none; /* visible only on lg+ */
+  flex: 0 0 42%;
+  background: linear-gradient(150deg, var(--cs-brand-mid) 0%, var(--cs-brand) 45%, var(--cs-brand-dark) 100%);
+  position: relative;
+  overflow: hidden;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 3.5rem;
+}
+
+/* Decorative circles */
+.auth-brand-panel::before {
+  content: '';
+  position: absolute;
+  width: 560px;
+  height: 560px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.05);
+  top: -180px;
+  right: -220px;
+  pointer-events: none;
+}
+.auth-brand-panel::after {
+  content: '';
+  position: absolute;
+  width: 380px;
+  height: 380px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.04);
+  bottom: -140px;
+  left: -80px;
+  pointer-events: none;
+}
+
+.auth-brand-content {
+  position: relative;
+  z-index: 1;
+  color: white;
+  max-width: 340px;
+}
+
+/* Logo mark */
+.auth-brand-logo {
+  width: 68px;
+  height: 68px;
+  background: rgba(255,255,255,0.14);
+  border: 1px solid rgba(255,255,255,0.22);
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin-bottom: 1.75rem;
+  backdrop-filter: blur(8px);
+  letter-spacing: -1px;
+}
+
+.auth-brand-content h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  margin-bottom: 0.75rem;
+  line-height: 1.2;
+}
+
+.auth-brand-content .tagline {
+  font-size: 0.95rem;
+  opacity: 0.78;
+  line-height: 1.65;
+  margin-bottom: 2.25rem;
+}
+
+/* Feature list */
+.auth-brand-features {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.auth-brand-features li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.45rem 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  opacity: 0.82;
+}
+.auth-brand-features li .feat-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: rgba(255,255,255,0.18);
+  border-radius: 50%;
+  font-size: 0.72rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* Bottom separator line */
+.auth-brand-divider {
+  width: 48px;
+  height: 3px;
+  background: rgba(255,255,255,0.3);
+  border-radius: 2px;
+  margin: 2rem 0;
+}
+
+/* ---- Right: Form Panel ---- */
+.auth-form-panel {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1.5rem;
+  overflow-y: auto;
+}
+
+.auth-form-inner {
+  width: 100%;
+  max-width: 450px;
+}
+
+/* Mobile logo (shown on small screens where brand panel is hidden) */
+.auth-mobile-logo {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.auth-mobile-logo .logo-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  background: var(--cs-brand);
+  border-radius: 16px;
+  color: white;
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+  margin-bottom: 0.75rem;
+}
+.auth-mobile-logo h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--cs-brand);
+  margin: 0;
+  letter-spacing: -0.3px;
+}
+
+/* The form card */
+.auth-card {
+  background: var(--cs-surface);
+  border-radius: var(--radius-xl) !important;
+  box-shadow: var(--shadow-xl);
+  padding: 2.5rem;
+}
+
+.auth-card h3, .auth-card h4 {
+  color: var(--cs-text);
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+.auth-card .form-control {
+  border-radius: var(--radius-sm) !important;
+}
+.auth-card .btn-brand {
+  width: 100%;
+  justify-content: center;
+  padding: 0.8rem;
+}
+
+@media (min-width: 992px) {
+  .auth-brand-panel {
+    display: flex;
+  }
+  .auth-mobile-logo {
+    display: none !important;
+  }
+}
+
+@media (max-width: 479px) {
+  .auth-card {
+    padding: 1.75rem 1.5rem;
+  }
+}
+
+
+/* ================================================
+   APP SHELL — Sidebar + Content
+   (painel.html & profissional.html)
+   ================================================ */
+
+.app-body {
+  min-height: 100vh;
+  background: var(--cs-bg);
+}
+
+/* ---- Sidebar ---- */
+.app-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: var(--sidebar-w);
+  background: var(--cs-surface);
+  border-right: 1px solid var(--cs-border);
+  display: flex;
+  flex-direction: column;
+  z-index: 1040;
+  transform: translateX(-100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-lg);
+}
+
+.app-sidebar.is-open {
+  transform: translateX(0);
+}
+
+/* Sidebar Header */
+.sidebar-header {
+  padding: 1.1rem 1.25rem;
+  border-bottom: 1px solid var(--cs-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  min-height: var(--topbar-h);
+}
+
+.sidebar-brand {
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--cs-brand);
+  letter-spacing: -0.3px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.sidebar-brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  background: var(--cs-brand);
+  border-radius: 8px;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.sidebar-badge {
+  font-size: 0.62rem;
+  font-weight: 700;
+  background: var(--cs-brand-light);
+  color: var(--cs-brand);
+  padding: 0.2rem 0.55rem;
+  border-radius: 100px;
+  white-space: nowrap;
+}
+
+.sidebar-close-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  background: var(--cs-bg);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 1.1rem;
+  color: var(--cs-text-muted);
+  transition: var(--t-fast);
+  flex-shrink: 0;
+  line-height: 1;
+}
+.sidebar-close-btn:hover {
+  background: var(--cs-border);
+  color: var(--cs-text);
+}
+
+/* Sidebar Nav */
+.sidebar-nav {
+  flex: 1;
+  padding: 0.875rem 0.625rem;
+  overflow-y: auto;
+}
+
+.sidebar-nav-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--cs-text-light);
+  padding: 0.75rem 0.875rem 0.4rem;
+  display: block;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.65rem 0.875rem;
+  border-radius: var(--radius-sm);
+  color: var(--cs-text-muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: var(--t-fast);
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  margin-bottom: 2px;
+  line-height: 1.4;
+}
+.sidebar-link .link-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+  width: 20px;
+  text-align: center;
+}
+.sidebar-link:hover {
+  background: var(--cs-bg);
+  color: var(--cs-brand);
+}
+.sidebar-link.active {
+  background: var(--cs-brand-light);
+  color: var(--cs-brand);
+  font-weight: 600;
+}
+
+/* Sidebar Footer */
+.sidebar-footer {
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--cs-border);
+  flex-shrink: 0;
+}
+
+.sidebar-user {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.875rem;
+}
+.sidebar-avatar {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, var(--cs-brand-mid), var(--cs-brand-dark));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 0.82rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.sidebar-user-info { min-width: 0; }
+.sidebar-user-name {
+  font-size: 0.835rem;
+  font-weight: 600;
+  color: var(--cs-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
+}
+.sidebar-user-role {
+  font-size: 0.72rem;
+  color: var(--cs-text-muted);
+  display: block;
+}
+
+.btn-sidebar-sair {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.5rem 0.875rem;
+  border: 1px solid var(--cs-border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--cs-text-muted);
+  font-size: 0.835rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--t-fast);
+}
+.btn-sidebar-sair:hover {
+  background: var(--cs-danger-light);
+  border-color: #fca5a5;
+  color: var(--cs-danger);
+}
+
+/* ---- Overlay (mobile) ---- */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  z-index: 1039;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.sidebar-overlay.is-open {
+  display: block;
+  opacity: 1;
+}
+
+/* ---- Main Content ---- */
+.app-content {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Top Bar (mobile) */
+.app-topbar {
+  height: var(--topbar-h);
+  background: var(--cs-surface);
+  border-bottom: 1px solid var(--cs-border);
+  display: flex;
+  align-items: center;
+  padding: 0 1.25rem;
+  gap: 0.875rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-xs);
+}
+
+.sidebar-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: var(--cs-bg);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  color: var(--cs-text);
+  font-size: 1rem;
+  transition: var(--t-fast);
+  flex-shrink: 0;
+}
+.sidebar-toggle-btn:hover { background: var(--cs-border); }
+
+.topbar-brand {
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: var(--cs-brand);
+}
+
+.topbar-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.app-main {
+  flex: 1;
+  padding: 1.5rem 1.25rem 2rem;
+}
+
+/* Welcome bar (replacement for the old bg-white bar) */
+.welcome-bar {
+  background: var(--cs-surface);
+  border-bottom: 1px solid var(--cs-border);
+  padding: 0.65rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ---- Desktop: sidebar always visible ---- */
+@media (min-width: 992px) {
+  .app-sidebar {
+    transform: translateX(0);
+    box-shadow: none;
+  }
+  .app-content {
+    margin-left: var(--sidebar-w);
+  }
+  .sidebar-close-btn { display: none; }
+  .app-topbar { display: none; }
+  .app-main {
+    padding: 2rem 2.25rem 3rem;
+  }
+}
+
+
+/* ================================================
+   ADMIN DASHBOARD SHELL
+   (admin.html)
+   ================================================ */
+
+.admin-body {
+  min-height: 100vh;
+  background: var(--cs-bg);
+}
+
+/* Admin Sidebar (dark) */
+.admin-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: var(--sidebar-w);
+  background: var(--cs-brand-dark);
+  display: flex;
+  flex-direction: column;
+  z-index: 1040;
+  transform: translateX(-100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.admin-sidebar.is-open {
+  transform: translateX(0);
+}
+
+/* Admin sidebar overrides */
+.admin-sidebar .sidebar-header {
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  background: rgba(0,0,0,0.18);
+}
+.admin-sidebar .sidebar-brand {
+  color: #fff;
+}
+.admin-sidebar .sidebar-brand-mark {
+  background: rgba(255,255,255,0.18);
+}
+.admin-sidebar .sidebar-badge {
+  background: rgba(255,255,255,0.14);
+  color: rgba(255,255,255,0.85);
+}
+.admin-sidebar .sidebar-close-btn {
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.6);
+}
+.admin-sidebar .sidebar-close-btn:hover {
+  background: rgba(255,255,255,0.16);
+  color: white;
+}
+.admin-sidebar .sidebar-nav-label {
+  color: rgba(255,255,255,0.35);
+}
+.admin-sidebar .sidebar-link {
+  color: rgba(255,255,255,0.62);
+}
+.admin-sidebar .sidebar-link:hover {
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.95);
+}
+.admin-sidebar .sidebar-link.active {
+  background: rgba(255,255,255,0.13);
+  color: #fff;
+  font-weight: 600;
+}
+.admin-sidebar .sidebar-footer {
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.admin-sidebar .sidebar-user-name {
+  color: rgba(255,255,255,0.92);
+}
+.admin-sidebar .sidebar-user-role {
+  color: rgba(255,255,255,0.50);
+}
+.admin-sidebar .btn-sidebar-sair {
+  border-color: rgba(255,255,255,0.14);
+  color: rgba(255,255,255,0.60);
+}
+.admin-sidebar .btn-sidebar-sair:hover {
+  background: rgba(220,38,38,0.18);
+  border-color: rgba(220,38,38,0.35);
+  color: #fca5a5;
+}
+
+/* Admin content */
+.admin-content {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.admin-main {
+  flex: 1;
+  padding: 1.5rem 1.25rem 2rem;
+}
+
+/* Admin tab panes styling */
+.admin-main .tab-pane {
+  padding: 0;
+}
+
+/* Metric Cards */
+.metric-card {
+  background: var(--cs-surface);
+  border-radius: var(--radius-md) !important;
+  padding: 1.25rem 1.5rem;
+  box-shadow: var(--shadow-sm);
+  border-left: 4px solid var(--cs-border);
+  transition: var(--t-normal);
+  border-right: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+}
+.metric-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.metric-card.bc-primary { border-left-color: var(--cs-brand) !important; }
+.metric-card.bc-success { border-left-color: var(--cs-success) !important; }
+.metric-card.bc-warning { border-left-color: var(--cs-warning) !important; }
+.metric-card.bc-danger  { border-left-color: var(--cs-danger) !important; }
+.metric-card .metric-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--cs-text-muted);
+  margin-bottom: 0.35rem;
+}
+.metric-card h3 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--cs-text);
+  margin: 0;
+  letter-spacing: -1px;
+}
+
+/* Section header in admin */
+.admin-section-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+.admin-section-header h5 {
+  color: var(--cs-brand);
+  font-weight: 700;
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+/* Desktop admin */
+@media (min-width: 992px) {
+  .admin-sidebar {
+    transform: translateX(0);
+  }
+  .admin-content {
+    margin-left: var(--sidebar-w);
+  }
+  .admin-sidebar .sidebar-close-btn { display: none; }
+  .admin-topbar { display: none; }
+  .admin-main {
+    padding: 2rem 2.25rem 3rem;
+  }
+}

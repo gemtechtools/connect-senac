@@ -2,68 +2,76 @@
 const cron = require('node-cron');
 const supabase = require('../config/database');
 
-// Expressão CRON: '* * * * *' significa "Executar a cada minuto"
-// Na vida real, poderíamos usar '0 * * * *' (a cada hora) ou '0 8 * * *' (todos os dias às 08h00)
-cron.schedule('* * * * *', async () => {
-    console.log('🤖 [CRON] A executar varredura de notificações de agendamentos...');
+// Conjunto para evitar disparos duplicados na mesma execução
+const notificacoesEnviadas = new Set();
 
+// Expressão CRON: '* * * * *' executa a cada minuto
+cron.schedule('* * * * *', async () => {
     try {
         const agora = new Date();
 
-        // Calcula o limite: daqui a exatas 24 horas
-        const daquiA24Horas = new Date(agora.getTime() + (24 * 60 * 60 * 1000));
-        const limiteInferior = agora.toISOString();
-        const limiteSuperior = daquiA24Horas.toISOString();
-
-        // 1. Procurar agendamentos confirmados que acontecem nas próximas 24h
+        // 1. Procurar agendamentos com status 'agendado'
         const { data: agendamentos, error } = await supabase
             .from('agendamentos')
             .select(`
                 id,
                 status,
-                usuarios ( nome, email, telefone ),
-                disponibilidades ( data_hora, cursos ( nome ) )
+                usuarios ( id, nome, email, telefone ),
+                disponibilidades!inner ( id, data_hora, cursos ( id, nome ) )
             `)
-            .eq('status', 'agendado')
-            // Filtro de tempo: data_hora é MAIOR que agora, mas MENOR que amanhã à mesma hora
-            .gt('disponibilidades.data_hora', limiteInferior)
-            .lt('disponibilidades.data_hora', limiteSuperior);
+            .eq('status', 'agendado');
 
         if (error) throw error;
+        if (!agendamentos || agendamentos.length === 0) return;
 
-        if (!agendamentos || agendamentos.length === 0) {
-            return; // Nada a fazer, encerra o ciclo silenciosamente
-        }
-
-        // 2. Disparar os avisos
-        agendamentos.forEach(ag => {
-            
-            // [NOVA TRAVA DE SEGURANÇA] - Programação Defensiva
-            // Se por algum motivo o agendamento for órfão e não tiver disponibilidade, saltamos ele!
-            if (!ag.disponibilidades || !ag.disponibilidades.data_hora) {
-                console.log(`⚠️ [CRON AVISO] Agendamento ignorado: Dados de horário ausentes.`);
-                return; // O return dentro de um forEach funciona como um 'continue', indo para o próximo item
-            }
+        for (const ag of agendamentos) {
+            if (!ag.disponibilidades || !ag.disponibilidades.data_hora) continue;
 
             const dataCurso = new Date(ag.disponibilidades.data_hora);
-            const diferencaEmMinutos = Math.floor((dataCurso - agora) / (1000 * 60));
+            const diferencaEmMinutos = Math.round((dataCurso.getTime() - agora.getTime()) / (1000 * 60));
 
-            // Só envia se faltarem exatas 24h (1440 min) ou 3h (180 min)
-            if (diferencaEmMinutos === 1440 || diferencaEmMinutos === 180) {
-                // Outra trava de segurança para garantir que o curso e o usuário existem
-                const curso = ag.disponibilidades.cursos?.nome || 'Curso não identificado';
-                const cliente = ag.usuarios?.nome || 'Aluno';
-                const horaFormatada = dataCurso.toLocaleString('pt-BR', { timeStyle: 'short' });
-
-                console.log(`\n📧 [EMAIL ENVIADO] Para: ${ag.usuarios?.email || 'Sem e-mail'}`);
-                console.log(`Olá, ${cliente}! Lembramos que o seu agendamento para ${curso} é amanhã/hoje às ${horaFormatada}.`);
-                console.log(`Em caso de imprevistos, cancele na plataforma com 2 horas de antecedência.\n`);
+            // Se o horário já passou há mais de 1 hora, atualiza preguiçosamente para 'concluido'
+            if (diferencaEmMinutos < -60) {
+                await supabase
+                    .from('agendamentos')
+                    .update({ status: 'concluido' })
+                    .eq('id', ag.id);
+                continue;
             }
-        });
+
+            // Janela de 24 horas (entre 1435 e 1445 minutos)
+            const chave24h = `${ag.id}_24h`;
+            if (diferencaEmMinutos >= 1435 && diferencaEmMinutos <= 1445 && !notificacoesEnviadas.has(chave24h)) {
+                notificacoesEnviadas.add(chave24h);
+                dispararNotificacao(ag, dataCurso, '24 horas');
+            }
+
+            // Janela de 3 horas (entre 175 e 185 minutos)
+            const chave3h = `${ag.id}_3h`;
+            if (diferencaEmMinutos >= 175 && diferencaEmMinutos <= 185 && !notificacoesEnviadas.has(chave3h)) {
+                notificacoesEnviadas.add(chave3h);
+                dispararNotificacao(ag, dataCurso, '3 horas');
+            }
+        }
+
+        // Limpa o cache de notificações enviadas periodicamente para não acumular memória
+        if (notificacoesEnviadas.size > 5000) notificacoesEnviadas.clear();
 
     } catch (error) {
-        console.error('❌ [CRON ERRO] Falha ao varrer notificações:', error.message);
+        console.error('❌ [CRON ERRO] Falha ao processar notificações:', error.message);
     }
 });
+
+function dispararNotificacao(ag, dataCurso, antecedencia) {
+    const curso = ag.disponibilidades?.cursos?.nome || 'Curso Prático';
+    const cliente = ag.usuarios?.nome || 'Modelo Voluntário';
+    const email = ag.usuarios?.email || 'Sem e-mail';
+    const horaFormatada = dataCurso.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+
+    console.log(`\n🔔 [NOTIFICAÇÃO DISPARADA - ${antecedencia.toUpperCase()} DE ANTECEDÊNCIA]`);
+    console.log(`📧 Destinatário: ${cliente} <${email}>`);
+    console.log(`📌 Mensagem: Olá, ${cliente}! Lembramos que o seu agendamento para "${curso}" ocorrerá em ${horaFormatada}.`);
+    console.log(`⚠️ Regra de Cancelamento: Caso não possa comparecer, cancele no sistema com no mínimo 2 horas de antecedência.\n`);
+}
 
 console.log('⏳ Motor de Notificações (CRON) ativado e a aguardar...');

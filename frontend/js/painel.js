@@ -6,6 +6,17 @@ const API_URL = window.location.protocol === 'file:' ? FALLBACK_BASE_URL : `${wi
 const token = localStorage.getItem('token');
 if (!token) window.location.href = 'index.html';
 
+try {
+    const payloadToken = JSON.parse(atob(token.split('.')[1]));
+    const elNome = document.getElementById('userNome');
+    if (elNome && payloadToken.email) {
+        elNome.textContent = payloadToken.email.split('@')[0];
+    }
+} catch (e) {
+    localStorage.removeItem('token');
+    window.location.href = 'index.html';
+}
+
 document.getElementById('btnSair').addEventListener('click', () => {
     localStorage.removeItem('token');
     window.location.href = 'index.html';
@@ -318,11 +329,11 @@ if (formFeedback) {
 
             if (response.ok) {
                 msgDiv.innerHTML = `<span class="text-success">${data.mensagem}</span>`;
+                carregarMeusAgendamentos();
+                carregarMeusFeedbacks();
                 setTimeout(() => {
                     modalFeedback.hide();
-                    // Opcional: Aqui podíamos atualizar a UI para esconder o botão de avaliar,
-                    // mas por agora o backend já bloqueia duplicações de forma segura.
-                }, 2000);
+                }, 1500);
             } else {
                 msgDiv.innerHTML = `<span class="text-danger">${data.erro}</span>`;
             }
