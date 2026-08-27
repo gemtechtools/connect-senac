@@ -1,6 +1,5 @@
 // frontend/js/admin.js
 
-<<<<<<< HEAD
 const FALLBACK_BASE_URL = 'http://localhost:3000/api';
 const API_URL = window.location.protocol === 'file:' ? FALLBACK_BASE_URL : `${window.location.origin}/api`;
 
@@ -15,7 +14,7 @@ document.getElementById('userPerfil').textContent = payloadToken.perfil.toUpperC
 // Se o utilizador for Coordenador, ocultamos a Tab de criar novos colaboradores (RBAC)
 if (payloadToken.perfil === 'coordenador') {
     const equipaTab = document.getElementById('equipa-tab');
-    if(equipaTab) equipaTab.style.display = 'none';
+    if (equipaTab) equipaTab.style.display = 'none';
 }
 
 document.getElementById('btnSair').addEventListener('click', () => {
@@ -26,7 +25,7 @@ document.getElementById('btnSair').addEventListener('click', () => {
 // ============================================================================
 // 1. CARREGAR MÉTRICAS DO DASHBOARD
 // ============================================================================
-async function carregarMetricas(){
+async function carregarMetricas() {
     try {
         const response = await fetch(`${API_URL}/dashboard/metricas`, {
             headers: { 'Authorization': `Bearer ${token}` }
@@ -48,7 +47,7 @@ async function carregarMetricas(){
 // ============================================================================
 let baseUtilizadores = [];
 
-async function carregarUtilizadores(){
+async function carregarUtilizadores() {
     const tbody = document.getElementById('tabelaUsuariosBody');
     try {
         const response = await fetch(`${API_URL}/admin/usuarios`, {
@@ -61,7 +60,7 @@ async function carregarUtilizadores(){
     }
 }
 
-function renderizarTabelaUtilizadores(lista){
+function renderizarTabelaUtilizadores(lista) {
     const tbody = document.getElementById('tabelaUsuariosBody');
     tbody.innerHTML = '';
 
@@ -129,7 +128,7 @@ function renderizarTabelaUtilizadores(lista){
     });
 }
 
-function aplicarFiltrosUsuarios(){
+function aplicarFiltrosUsuarios() {
     const termo = document.getElementById('filtroTextoUser').value.toLowerCase();
     const perfil = document.getElementById('filtroPerfilUser').value;
 
@@ -156,7 +155,7 @@ if (btnLimpar) {
     });
 }
 
-async function alterarPerfil(idUsuario, novoPerfil){
+async function alterarPerfil(idUsuario, novoPerfil) {
     if (!confirm(`Deseja alterar o perfil deste utilizador para ${novoPerfil.toUpperCase()}?`)) {
         carregarUtilizadores();
         return;
@@ -184,7 +183,7 @@ async function alterarPerfil(idUsuario, novoPerfil){
 }
 
 // Lógica de Bloqueio/Desbloqueio (Moderação)
-async function toggleBloqueio(id, statusAtual){
+async function toggleBloqueio(id, statusAtual) {
     const acao = statusAtual ? 'desbloquear' : 'bloquear';
     if (!confirm(`Tem a certeza que deseja ${acao} este utilizador?`)) return;
 
@@ -214,7 +213,7 @@ async function toggleBloqueio(id, statusAtual){
 // 3. CRIAR NOVO COLABORADOR (APENAS ADMIN)
 // ============================================================================
 const formColaborador = document.getElementById('formColaborador');
-if(formColaborador) {
+if (formColaborador) {
     formColaborador.addEventListener('submit', async (e) => {
         e.preventDefault();
         const msgDiv = document.getElementById('msgColab');
@@ -296,7 +295,7 @@ formCurso.addEventListener('submit', async (e) => {
     }
 });
 
-async function carregarCursosNoSelect(){
+async function carregarCursosNoSelect() {
     const select = document.getElementById('selectCurso');
     try {
         const response = await fetch(`${API_URL}/cursos/ativos`, {
@@ -352,7 +351,7 @@ formVagas.addEventListener('submit', async (e) => {
     }
 });
 
-async function carregarProfissionaisNoSelect(){
+async function carregarProfissionaisNoSelect() {
     const select = document.getElementById('selectProfissional');
     try {
         const response = await fetch(`${API_URL}/admin/profissionais`, {
@@ -371,7 +370,7 @@ async function carregarProfissionaisNoSelect(){
     }
 }
 
-async function excluirUsuario(id, nome){
+async function excluirUsuario(id, nome) {
     if (!confirm(`ATENÇÃO: Tem certeza absoluta que deseja remover a conta de ${nome}? Todos os seus agendamentos serão excluídos.`)) return;
 
     try {
@@ -420,7 +419,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // ==========================================
 // 2. LISTAR CURSOS NA TABELA DE GESTÃO
 // ==========================================
-async function carregarCursosAdmin(){
+async function carregarCursosAdmin() {
     const tbody = document.getElementById('tabelaCursosBody');
     if (!tbody) return;
 
@@ -472,8 +471,8 @@ async function carregarCursosAdmin(){
 // ==========================================
 // 3. EDITAR E ARQUIVAR CURSOS
 // ==========================================
-async function arquivarCurso(id, nome){
-    if(!confirm(`Deseja arquivar o curso "${nome}"? Ele sairá da vitrine dos alunos, mas o histórico será mantido.`)) return;
+async function arquivarCurso(id, nome) {
+    if (!confirm(`Deseja arquivar o curso "${nome}"? Ele sairá da vitrine dos alunos, mas o histórico será mantido.`)) return;
 
     try {
         const response = await fetch(`${API_URL}/cursos/${id}`, {
@@ -492,7 +491,7 @@ async function arquivarCurso(id, nome){
     }
 }
 
-function abrirModalEdicao(curso){
+function abrirModalEdicao(curso) {
     document.getElementById('editCursoId').value = curso.id;
     document.getElementById('editNome').value = curso.nome;
     document.getElementById('editDescricao').value = curso.descricao;
@@ -717,63 +716,3 @@ carregarMetricas();
 carregarCursosNoSelect();
 carregarUtilizadores();
 carregarPautasGlobais();
-=======
-// const API_URL = 'http://localhost:3000/api';
-
-const FALLBACK_BASE_URL = 'http://localhost:3000/api';
-const API_URL = window.location.protocol === 'file:' ? FALLBACK_BASE_URL : `${window.location.origin}/api`;
-
-async function carregarTodosAgendamentos() {
-    try {
-        // Como é uma rota administrativa de MVP, no momento ela está protegida pelo mesmo
-        // middleware JWT. Portanto, precisamos de estar logados para aceder (usando o token local)
-        const token = localStorage.getItem('token');
-        if (!token) {
-            alert('Acesso negado. Faça login para ver o painel da coordenação.');
-            window.location.href = 'index.html';
-            return;
-        }
-
-        const response = await fetch(`${API_URL}/agendamentos/admin/todos`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-
-        const agendamentos = await response.json();
-        const tbody = document.getElementById('tabelaAdmin');
-        tbody.innerHTML = ''; 
-
-        if (agendamentos.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" class="text-center">Nenhum agendamento no sistema.</td></tr>';
-            return;
-        }
-
-        agendamentos.forEach(agendamento => {
-            const dataFormatada = new Date(agendamento.data_hora).toLocaleString('pt-PT');
-            
-            // Definindo as cores dos crachás (badges) conforme o estado
-            let corBadge = 'primary'; // Agendado
-            if (agendamento.status === 'Cancelado') corBadge = 'danger';
-            if (agendamento.status === 'Concluido') corBadge = 'success';
-
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td><strong>${dataFormatada}</strong></td>
-                <td>${agendamento.cliente_nome}</td>
-                <td><a href="https://wa.me/55${agendamento.telefone.replace(/\D/g, '')}" target="_blank" class="text-decoration-none">${agendamento.telefone}</a></td>
-                <td>${agendamento.servico_nome}</td>
-                <td><span class="badge bg-${corBadge}">${agendamento.status}</span></td>
-            `;
-            tbody.appendChild(tr);
-        });
-
-    } catch (error) {
-        console.error('Erro ao carregar painel admin:', error);
-    }
-}
-
-// Inicia o carregamento assim que a página abre
-carregarTodosAgendamentos();
->>>>>>> e07bd8c7e6080daa48705b3c909a3ed090e004e2
