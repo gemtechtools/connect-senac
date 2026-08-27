@@ -1,3 +1,7 @@
+<<<<<<< HEAD
 \node_modules
+=======
+node_modules/ 
+>>>>>>> e07bd8c7e6080daa48705b3c909a3ed090e004e2
 .env
 \config\database.sqlite
